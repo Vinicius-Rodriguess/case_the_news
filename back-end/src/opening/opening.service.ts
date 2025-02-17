@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Opening } from './opening.entity';
 import { Repository } from 'typeorm';
 import { User } from '../user/user.entity';
+import { UtmParams } from '../interfaces/UtmParams';
 
 @Injectable()
 export class OpeningService {
@@ -11,12 +12,13 @@ export class OpeningService {
     private readonly openingRepository: Repository<Opening>,
   ) {}
 
-  async create(newsletterId: string, user: User) {
+  async create(newsletterId: string, user: User, utmParams?: UtmParams) {
     const postagem = {
       user: user,
-      newsletter_id: newsletterId,
-      data_publicacao: newsletterId.replace('post_', ''),
-      opened_at: new Date().toISOString().split('T')[0],
+      newsletterId: newsletterId,
+      publicationDate: newsletterId.replace('post_', ''),
+      openedAt: new Date().toISOString().split('T')[0],
+      ...utmParams,
     };
 
     return await this.openingRepository.save(postagem);
@@ -24,7 +26,7 @@ export class OpeningService {
 
   async findOneById(newsletterId: string, userId: number) {
     return await this.openingRepository.findOne({
-      where: { newsletter_id: newsletterId, user: { id: userId } },
+      where: { newsletterId: newsletterId, user: { id: userId } },
       relations: { user: true },
     });
   }

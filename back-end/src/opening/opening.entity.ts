@@ -14,13 +14,25 @@ export class Opening {
   id: number;
 
   @Column({ length: 255, nullable: false })
-  newsletter_id: string;
+  newsletterId: string;
 
   @Column({ type: 'date', nullable: false })
-  opened_at: string;
+  openedAt: string;
 
   @Column({ type: 'date', nullable: false })
-  data_publicacao: string;
+  publicationDate: string;
+
+  @Column({ length: 255, nullable: true, default: '' })
+  utmSource?: string;
+
+  @Column({ length: 255, nullable: true, default: '' })
+  utmMedium?: string;
+
+  @Column({ length: 255, nullable: true, default: '' })
+  utmCampaign?: string;
+
+  @Column({ length: 255, nullable: true, default: '' })
+  utmChannel?: string;
 
   @ManyToOne(() => User, (user) => user.openings, { onDelete: 'CASCADE' })
   user: User;

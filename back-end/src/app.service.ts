@@ -3,6 +3,7 @@ import { UserService } from './user/user.service';
 import { OpeningService } from './opening/opening.service';
 import { User } from './user/user.entity';
 import { Opening } from './opening/opening.entity';
+import { UtmParams } from './interfaces/UtmParams';
 
 @Injectable()
 export class AppService {
@@ -11,27 +12,32 @@ export class AppService {
     private readonly openingService: OpeningService,
   ) {}
 
-  async webhookHandler(userEmail: string, newsletterId: string) {
+  async webhookHandler(
+    userEmail: string,
+    newsletterId: string,
+    utmParams?: UtmParams,
+  ) {
+    console.log(utmParams);
     // Cria ou retorna um user
     const user = await this.userHandler(userEmail);
 
     // Cria ou retorna uma opening
-    const opening = await this.openingHandler(newsletterId, user);
+    const opening = await this.openingHandler(newsletterId, user, utmParams);
 
     // Se o usuario esta lendo uma publicacao antiga
-    if (opening.opened_at !== opening.data_publicacao) {
+    if (opening.openedAt !== opening.publicationDate) {
       console.log('User is viewing an old post, nothing to do');
       return;
     }
 
     // Se o usuario entrar mais vezes na mesma publicacao no mesmo dia
-    if (user.lastOpenedAt === opening.opened_at) {
+    if (user.lastOpenedAt === opening.openedAt) {
       console.log('User is viewing again on the same day, nothing to do');
       return;
     }
 
     // Se e domingo, nao tem publicacao nesses dias
-    if (this.isSunday(opening.opened_at)) {
+    if (this.isSunday(opening.openedAt)) {
       console.log('No publications on Sundays, nothing to do');
       return;
     }
@@ -52,11 +58,15 @@ export class AppService {
     return user;
   }
 
-  private async openingHandler(newsletterId: string, user: User) {
+  private async openingHandler(
+    newsletterId: string,
+    user: User,
+    utmParams?: UtmParams,
+  ) {
     let opening = await this.openingService.findOneById(newsletterId, user.id);
 
     if (!opening) {
-      opening = await this.openingService.create(newsletterId, user);
+      opening = await this.openingService.create(newsletterId, user, utmParams);
       user.openings.push(opening);
       await this.userService.update(user);
     }
@@ -95,14 +105,14 @@ export class AppService {
     // Verifica se o usuario é novo no sistema
     if (user.lastOpenedAt === null) {
       console.log('New user');
-      user.lastOpenedAt = opening.opened_at;
+      user.lastOpenedAt = opening.openedAt;
       user.consecutiveStreak++;
       await this.userService.update(user);
       return;
     }
 
     // Pega a data da publicacao anterior
-    const previousDate = this.getPreviousValidDate(opening.opened_at);
+    const previousDate = this.getPreviousValidDate(opening.openedAt);
 
     // Compara a data da puplicacao anterior com a ultima leitura do usuario
     if (previousDate === user.lastOpenedAt) {
@@ -117,7 +127,7 @@ export class AppService {
     }
 
     // Atualiza a ultima leitura
-    user.lastOpenedAt = opening.opened_at;
+    user.lastOpenedAt = opening.openedAt;
     await this.userService.update(user);
   }
 }
