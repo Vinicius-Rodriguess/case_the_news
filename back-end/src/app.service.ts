@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { UserService } from './user/user.service';
 import { OpeningService } from './opening/opening.service';
 import { User } from './user/user.entity';
+import { Opening } from './opening/opening.entity';
 
 @Injectable()
 export class AppService {
@@ -17,6 +18,7 @@ export class AppService {
     // Cria ou retorna uma opening
     const opening = await this.openingHandler(newsletterId, user);
 
+    await this.updateStreak(user, opening);
     return;
   }
 
@@ -41,5 +43,57 @@ export class AppService {
     }
 
     return opening;
+  }
+
+  private getPreviousValidDate(openedAt: string) {
+    // Pega a data e monta um Date
+    const [year, month, day] = openedAt.split('-').map(Number);
+    const openingDate = new Date(year, month - 1, day);
+
+    let daysToGoBack = 1;
+
+    // Se for segunda volta dois dias, para verificar a publicacao de sabado
+    if (openingDate.getDay() === 1) {
+      console.log('It is Monday, going back two days');
+      daysToGoBack = 2;
+    }
+
+    // Subtraia os dias e formata a data
+    openingDate.setDate(openingDate.getDate() - daysToGoBack);
+    const previousDate = openingDate.toISOString().split('T')[0];
+
+    return previousDate;
+  }
+
+  private async updateStreak(user: User, opening: Opening) {
+    user.totalStreak++;
+
+    // Verifica se o usuario é novo no sistema
+    if (user.lastOpenedAt === null) {
+      console.log('New user');
+      user.lastOpenedAt = opening.opened_at;
+      user.consecutiveStreak++;
+      await this.userService.update(user);
+      return;
+    }
+
+    // Pega a data da publicacao anterior
+    const previousDate = this.getPreviousValidDate(opening.opened_at);
+
+    // Compara a data da puplicacao anterior com a ultima leitura do usuario
+    if (previousDate === user.lastOpenedAt) {
+      user.consecutiveStreak++;
+      console.log('Consecutive days');
+    } else {
+      console.log('Non-consecutive days');
+      if (user.highestConsecutiveStreak < user.consecutiveStreak)
+        user.highestConsecutiveStreak = user.consecutiveStreak;
+
+      user.consecutiveStreak = 1;
+    }
+
+    // Atualiza a ultima leitura
+    user.lastOpenedAt = opening.opened_at;
+    await this.userService.update(user);
   }
 }
