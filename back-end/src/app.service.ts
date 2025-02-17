@@ -18,7 +18,26 @@ export class AppService {
     // Cria ou retorna uma opening
     const opening = await this.openingHandler(newsletterId, user);
 
+    // Se o usuario esta lendo uma publicacao antiga
+    if (opening.opened_at !== opening.data_publicacao) {
+      console.log('User is viewing an old post, nothing to do');
+      return;
+    }
+
+    // Se o usuario entrar mais vezes na mesma publicacao no mesmo dia
+    if (user.lastOpenedAt === opening.opened_at) {
+      console.log('User is viewing again on the same day, nothing to do');
+      return;
+    }
+
+    // Se e domingo, nao tem publicacao nesses dias
+    if (this.isSunday(opening.opened_at)) {
+      console.log('No publications on Sundays, nothing to do');
+      return;
+    }
+
     await this.updateStreak(user, opening);
+
     return;
   }
 
@@ -43,6 +62,11 @@ export class AppService {
     }
 
     return opening;
+  }
+
+  private isSunday(dateString: string): boolean {
+    const [year, month, day] = dateString.split('-').map(Number);
+    return new Date(year, month - 1, day).getDay() === 0;
   }
 
   private getPreviousValidDate(openedAt: string) {
