@@ -10,6 +10,20 @@ export class AppService {
   ) {}
 
   async webhookHandler(userEmail: string, newsletterId: string) {
+    // Cria ou retorna um user
+    const user = await this.userHandler(userEmail);
+
     return;
+  }
+
+  private async userHandler(userEmail: string) {
+    let user = await this.userService.findOneByEmail(userEmail);
+
+    if (!user) {
+      user = await this.userService.create(userEmail);
+      if (!user.openings) user.openings = [];
+    }
+
+    return user;
   }
 }
