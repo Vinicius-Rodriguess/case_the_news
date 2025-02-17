@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { Opening } from '../opening/opening.entity';
 
 @Entity({ name: 'tb_user' })
 export class User {
@@ -13,12 +15,6 @@ export class User {
 
   @Column({ length: 255, unique: true, nullable: false })
   email: string;
-
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @UpdateDateColumn()
-  updatedAt: Date;
 
   @Column({ default: 0 })
   totalStreak: number;
@@ -31,4 +27,13 @@ export class User {
 
   @Column({ type: 'date', nullable: true })
   lastOpenedAt: string;
+
+  @OneToMany(() => Opening, (opening) => opening.user)
+  openings: Opening[];
+
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
 }

@@ -2,9 +2,11 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { User } from '../user/user.entity';
 
 @Entity({ name: 'tb_openings' })
 export class Opening {
@@ -19,6 +21,9 @@ export class Opening {
 
   @Column({ type: 'date', nullable: false })
   data_publicacao: string;
+
+  @ManyToOne(() => User, (user) => user.openings, { onDelete: 'CASCADE' })
+  user: User;
 
   @CreateDateColumn()
   createdAt: Date;
