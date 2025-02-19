@@ -1,0 +1,55 @@
+.rdp-month {
+    color: white;
+
+    @media screen and (width >= 40rem) {
+        width: 40rem;
+    }
+}
+
+.rdp-caption_label {
+    font-size: 1.7rem;
+}
+
+.rdp-chevron {
+    font-size: 1.5rem;
+}
+
+.rdp-week {
+    @media screen and (width >= 40rem) {
+        height: 5rem;
+    }
+}
+
+.rdp-month_grid {
+    gap: 5rem;
+    width: 100%;
+    height: 20rem;
+}
+
+.rdp-weekday {
+    font-size: 1.5rem;
+    color: #FFCE04;
+    text-align: center;
+    opacity: 1;
+}
+
+.rdp-day_button {
+    font-size: 1.5rem;
+    margin: auto;
+}
+
+.rdp-today {
+    color: white !important;
+}
+
+.rdp-nav .rdp-chevron {
+    fill: currentColor;
+}
+
+.rdp-button_previous, .rdp-button_next {
+    color: #ffffff; 
+}
+
+.rdp-selected .rdp-day_button {
+    border: none;
+}

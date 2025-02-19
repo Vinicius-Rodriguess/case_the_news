@@ -5,11 +5,12 @@ import {
   EnvelopeOpen,
   Fire,
 } from "@phosphor-icons/react";
-import { StreakCard } from "../../components/streakCard/StreakCard";
-import { useEffect, useState } from "react";
-import { Opening } from "../../interfaces/Opening";
+import CalendarComponent from "../../components/calendar/Calendar";
 import { getUserOpenings } from "../../services/userService";
+import { Opening } from "../../interfaces/Opening";
 import { User } from "../../interfaces/User";
+import { useEffect, useState } from "react";
+import { StreakCard } from "../../components/streakCard/StreakCard";
 
 export const Streak = () => {
   const [user, setUser] = useState({} as User);
@@ -43,6 +44,7 @@ export const Streak = () => {
           Café na Mão, Notícias na Cabeça: Seu Combustível Matinal
         </p>
       </div>
+
       <div className=" w-full grid sm:grid-cols-3 sm:justify-center sm:items-center p-4 max-w-7xl gap-4">
         <StreakCard
           icon={<Fire size={60} className="text-red-600" />}
@@ -66,6 +68,13 @@ export const Streak = () => {
           <h2 className="text-4xl sm:text-4xl text-center">
             Seu Histórico de Leituras
           </h2>
+        </div>
+      </div>
+      <div className="w-full flex justify-center">
+        <div className="max-w-7xl w-full flex justify-center">
+          <div className="bg-black p-4 rounded-2xl shadow-xl hover:scale-102 transition-all">
+            <CalendarComponent markedDates={dateOpenings} />
+          </div>
         </div>
       </div>
       <div className="w-full flex justify-center pb-5">
