@@ -53,4 +53,17 @@ export class OpeningService {
       .limit(limit)
       .getRawMany();
   }
+
+  async getEngagementMetricsOpening() {
+    const totalOpenings = await this.openingRepository.count();
+    const totalUniqueOpenings = await this.openingRepository
+      .createQueryBuilder('opening')
+      .select('COUNT(DISTINCT opening.newsletterId)', 'count')
+      .getRawOne();
+
+    return {
+      totalOpenings,
+      totalUniqueOpenings: Number(totalUniqueOpenings.count),
+    };
+  }
 }
