@@ -130,4 +130,18 @@ export class AppService {
     user.lastOpenedAt = opening.openedAt;
     await this.userService.update(user);
   }
+
+  async getEngagementMetrics() {
+    const { totalUsers, avgStreak } =
+      await this.userService.getEngagementMetricsUser();
+    const { totalOpenings, totalUniqueOpenings } =
+      await this.openingService.getEngagementMetricsOpening();
+
+    return {
+      totalUsers,
+      totalOpenings,
+      totalUniqueOpenings,
+      avgStreak,
+    };
+  }
 }
