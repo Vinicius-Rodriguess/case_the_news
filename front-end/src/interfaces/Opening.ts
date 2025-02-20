@@ -9,6 +9,7 @@ export interface Opening {
   utmMedium?: string;
   utmCampaign?: string;
   utmChannel?: string;
+  openingsCount?: string;
   user: User;
   createdAt: string;
   updatedAt: string;
