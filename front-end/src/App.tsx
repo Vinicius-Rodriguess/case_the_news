@@ -11,7 +11,7 @@ function App() {
         <Navbar />
         <div>
           <Routes>
-            <Route path="/streak/" element={<Streak />} />
+            <Route path="/streak/:email" element={<Streak />} />
             <Route path="/streak/admin" element={<Admin />} />
           </Routes>
         </div>
