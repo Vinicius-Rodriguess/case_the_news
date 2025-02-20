@@ -25,4 +25,12 @@ export class UserService {
       relations: { openings: true },
     });
   }
+
+  async getTopUsers(limit = 5) {
+    return await this.userRepository.find({
+      order: { consecutiveStreak: 'DESC' },
+      take: limit,
+      select: ['email', 'consecutiveStreak'],
+    });
+  }
 }
