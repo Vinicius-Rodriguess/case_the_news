@@ -30,4 +30,16 @@ export class OpeningService {
       relations: { user: true },
     });
   }
+
+  async getAllOpenings() {
+    return await this.openingRepository
+      .createQueryBuilder('opening')
+      .select('opening.newsletterId', 'newsletterId')
+      .addSelect('opening.publicationDate', 'publicationDate')
+      .addSelect('COUNT(opening.id)', 'openingsCount')
+      .groupBy('opening.newsletterId')
+      .addGroupBy('opening.publicationDate')
+      .orderBy('openingsCount', 'DESC')
+      .getRawMany();
+  }
 }
