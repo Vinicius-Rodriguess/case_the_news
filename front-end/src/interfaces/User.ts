@@ -10,4 +10,5 @@ export interface User {
   openings: Opening[];
   createdAt: string;
   updatedAt: string;
+  level: string;
 }
