@@ -42,4 +42,15 @@ export class OpeningService {
       .orderBy('openingsCount', 'DESC')
       .getRawMany();
   }
+
+  async getTopOpenings(limit = 5) {
+    return await this.openingRepository
+      .createQueryBuilder('opening')
+      .select('opening.newsletterId', 'newsletterId')
+      .addSelect('COUNT(opening.id)', 'openingsCount')
+      .groupBy('opening.newsletterId')
+      .orderBy('openingsCount', 'DESC')
+      .limit(limit)
+      .getRawMany();
+  }
 }
