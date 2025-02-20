@@ -33,4 +33,19 @@ export class UserService {
       select: ['email', 'consecutiveStreak'],
     });
   }
+
+  async getEngagementMetricsUser() {
+    const totalUsers = await this.userRepository.count();
+
+    const avgStreak = await this.userRepository
+      .createQueryBuilder('user')
+      .select('AVG(user.consecutiveStreak)', 'average')
+      .where('user.consecutiveStreak > 0')
+      .getRawOne();
+
+    return {
+      totalUsers,
+      avgStreak: Number(avgStreak.average).toFixed(0),
+    };
+  }
 }
