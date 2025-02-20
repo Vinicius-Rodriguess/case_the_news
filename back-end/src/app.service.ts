@@ -4,6 +4,7 @@ import { OpeningService } from './opening/opening.service';
 import { User } from './user/user.entity';
 import { Opening } from './opening/opening.entity';
 import { UtmParams } from './interfaces/UtmParams';
+import { UserLevel } from './enums/userLevel';
 
 @Injectable()
 export class AppService {
@@ -17,7 +18,6 @@ export class AppService {
     newsletterId: string,
     utmParams?: UtmParams,
   ) {
-    console.log(utmParams);
     // Cria ou retorna um user
     const user = await this.userHandler(userEmail);
 
@@ -126,9 +126,18 @@ export class AppService {
       user.consecutiveStreak = 1;
     }
 
+    user.level = this.calculateUserLevel(user.consecutiveStreak);
+
     // Atualiza a ultima leitura
     user.lastOpenedAt = opening.openedAt;
     await this.userService.update(user);
+  }
+
+  private calculateUserLevel(streak: number): UserLevel {
+    if (streak >= 30) return UserLevel.BARISTA_MESTRE;
+    else if (streak >= 10) return UserLevel.MACCHIATO;
+
+    return UserLevel.CAFE_EXPRESSO;
   }
 
   async getEngagementMetrics() {

@@ -7,6 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Opening } from '../opening/opening.entity';
+import { UserLevel } from '../enums/userLevel';
 
 @Entity({ name: 'tb_user' })
 export class User {
@@ -24,6 +25,13 @@ export class User {
 
   @Column({ default: 0 })
   highestConsecutiveStreak: number;
+
+  @Column({
+    type: 'enum',
+    enum: UserLevel,
+    default: UserLevel.CAFE_EXPRESSO,
+  })
+  level: UserLevel;
 
   @Column({ type: 'date', nullable: true })
   lastOpenedAt: string;
